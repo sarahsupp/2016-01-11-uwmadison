@@ -210,108 +210,61 @@ The following table shows some of the common names of data types between the var
 
 **Discuss different data types with students. Have students discuss with partner examples of when you might use certain data types, and ask for a few examples. Ask if there are any questions**
 
+# Basic Queries
+
 ### Writing a Query
 Let's make our first SQL query!
+Let's start by using the **surveys** table. Here, we have data on every individual that was captured at the site, including when they were captured, what plot they were captured on, their species ID, sex, and weight in grams.
+
 Go to the "Execute SQL" tab in the SQLite Manager. This is the place that we will use to write our queries in this tool. If we decide later that we would like to save a summary table, we can use "Create View" under the "View" toolbar (more on this later).
 
 Our query and its output look like this:
 
+<pre class="in"><code>%SELECT * FROM table;</code></pre>
 
-<pre class="in"><code>%SELECT * FROM table</code></pre>
+In the above example, `*` represents all the columns in the table. But we can pick and choose which columns we would like to see.
 
-In the above example, * represents all the columns in the table. But we can pick and choose which columns we would like to see.
+Let's write an SQL query that selects only the year column from the surveys table.
 
+<pre class="in"><code>SELECT year FROM surveys;</code></pre>
 
-<pre class="in"><code>SELECT family, personal FROM Person</code></pre>
+If we want more information, we can just add a new column to the list of fields, right after the SELECT statement:
 
-<div class="out"><table>
-<tr><td>Dyer</td><td>William</td></tr>
-<tr><td>Pabodie</td><td>Frank</td></tr>
-<tr><td>Lake</td><td>Anderson</td></tr>
-<tr><td>Roerich</td><td>Valentina</td></tr>
-<tr><td>Danforth</td><td>Frank</td></tr>
-</table></div>
+<pre class="in"><code>SELECT year, month, day FROM surveys;</code></pre>
 
+In the Firefox SQLite Manager, we don't need to end our statement with a semi-colon (although we can), but in many other tools you do. The semi-colon at the end of the query tells the database manager that the query is complete and ready to run.
 
-In the Firefox SQLite Manager, we don't need to end our statement with a semi-colon (although we can), but in many other tools you do. The semi-colon at the end of the query
-tells the database manager that the query is complete and ready to run.
-
-We have written our commands and column names in lower case,
-and the table name in Title Case,
+We have capitalized the words SELECT and FROM because they are SQL keywords, or commands. SQL is case insensitive, but it helps for readability - good style (more on the importance of style tomorrow!).
+We have written our commands and column names in lower case, and the table name in Title Case,
 but we don't have to:
-as the example below shows,
-SQL is [case insensitive](../../gloss.html#case-insensitive).
+as the example below shows, SQL is [case insensitive](../../gloss.html#case-insensitive).
 
+<pre class="in"><code>SeLeCt YeAr, MonTH, DaY FrOm SuRvEyS;</code></pre>
 
-<pre class="in"><code>SeLeCt FaMiLy, PeRsOnAl FrOm PeRsOn;</code></pre>
-
-<div class="out"><table>
-<tr><td>Dyer</td><td>William</td></tr>
-<tr><td>Pabodie</td><td>Frank</td></tr>
-<tr><td>Lake</td><td>Anderson</td></tr>
-<tr><td>Roerich</td><td>Valentina</td></tr>
-<tr><td>Danforth</td><td>Frank</td></tr>
-</table></div>
-
-
-Whatever casing convention you choose,
-please be consistent:
+**Note:**
+Whatever casing convention you choose, please be consistent:
 complex queries are hard enough to read without the extra cognitive load of random capitalization. Here, I have capitalized the words SELECT and FROM because they are SQL keywords. For me, this helps with readability – good style.
 
 
-Going back to our query,
-it's important to understand that
+Going back to our query, it's important to understand that
 the rows and columns in a database table aren't actually stored in any particular order.
-They will always be *displayed* in some order,
-but we can control that in various ways.
+They will always be *displayed* in some order,but we can control that in various ways.
 For example,
 we could swap the columns in the output by writing our query as:
 
 
-<pre class="in"><code>SELECT personal, family FROM Person;</code></pre>
-
-<div class="out"><table>
-<tr><td>William</td><td>Dyer</td></tr>
-<tr><td>Frank</td><td>Pabodie</td></tr>
-<tr><td>Anderson</td><td>Lake</td></tr>
-<tr><td>Valentina</td><td>Roerich</td></tr>
-<tr><td>Frank</td><td>Danforth</td></tr>
-</table></div>
-
+<pre class="in"><code>SELECT day, month, year FROM surveys;</code></pre>
 
 or even repeat columns:
 
+<pre class="in"><code>SELECT day, day, day FROM surveys;</code></pre>
 
-<pre class="in"><code>SELECT ident, ident, ident FROM Person;</code></pre>
-
-<div class="out"><table>
-<tr><td>dyer</td><td>dyer</td><td>dyer</td></tr>
-<tr><td>pb</td><td>pb</td><td>pb</td></tr>
-<tr><td>lake</td><td>lake</td><td>lake</td></tr>
-<tr><td>roe</td><td>roe</td><td>roe</td></tr>
-<tr><td>danforth</td><td>danforth</td><td>danforth</td></tr>
-</table></div>
-
-
-As a shortcut,
-we can select all of the columns in a table using `*`:
-
-
-<pre class="in"><code>%%sqlite survey.db
-select * from Person;</code></pre>
-
-<div class="out"><table>
-<tr><td>dyer</td><td>William</td><td>Dyer</td></tr>
-<tr><td>pb</td><td>Frank</td><td>Pabodie</td></tr>
-<tr><td>lake</td><td>Anderson</td><td>Lake</td></tr>
-<tr><td>roe</td><td>Valentina</td><td>Roerich</td></tr>
-<tr><td>danforth</td><td>Frank</td><td>Danforth</td></tr>
-</table></div>
-
+And remember, as a shortcut,
+we can select all of the columns in a table using `*`.
 
 #### Challenges
 
-1.  Write a query that selects only site names from the `Site` table.
+1.  Write a query that selects only the plotID and description from the `plots` table.
 
 2.  Many people format queries as:
 
