@@ -9,11 +9,12 @@ root: ../..
 <div class="objectives" markdown="1">
 #### Objectives
 
-*   Explain how databases represent missing information.
-*   Explain the three-valued logic databases use when manipulating missing information.
-*   Write queries that handle missing information correctly.
+  *   Explain how databases represent missing information.
+  *   Explain the three-valued logic databases use when manipulating missing information.
+  *   Write queries that handle missing information correctly.
 </div>
 
+**This discussion might have overlap with the morning, if it has already been addressed, then we can skip ahead to how to handle it in a SQL database**
 
 **1 minute DISCUSS:Turn to another person near you (try to find someone new). Do you work with any data that has missing values? How do you enter it in your database? Do you use or ignore that data in your analysis? What are some potential problems when using data that has missing values? Ask 1-2 students to share**
 
@@ -47,7 +48,6 @@ its date is null:
 
 Null doesn't behave like other values.
 If we select the records that come before 1930:
-
 
 <pre class="in"><code>select * from Visited where dated&lt;&#39;1930-00-00&#39;;</code></pre>
 
@@ -99,7 +99,6 @@ and so on.
 
 In particular,
 comparing things to null with = and != produces null:
-
 
 <pre class="in"><code>select * from Visited where dated=NULL;</code></pre>
 
