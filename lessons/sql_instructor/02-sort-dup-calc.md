@@ -117,6 +117,11 @@ When we run the query, the expression `weight/1000.0` is evaluated for each row 
    1. Write a query that returns the year, month, day, plot_id, species_id, and weight in mg, sorted by plot_id.
 
 
+We can also concatenate values from different fields, for example, by using the string concatenation operator `||`:
+
+<pre class="in"><code>SELECT genus, species FROM species;</code></pre>
+
+**DISCUSS with partner for 1 minute: While we're thinking about data structure and manipulation, why do you think the names here are divided into species and genus? Would you combine the names into a single character string as we just did? Why or why not?
 
 <div class="keypoints" markdown="1">
 #### Key Points
@@ -129,4 +134,3 @@ When we run the query, the expression `weight/1000.0` is evaluated for each row 
     if we want to eliminate duplicates,
     we must specify that explicitly as well.
 *   The values in a database can be manipulated using basic arthimetic operators or built-in functions
-*   As we build more complex queries, it is often a good idea to save that query for future use or reference.
