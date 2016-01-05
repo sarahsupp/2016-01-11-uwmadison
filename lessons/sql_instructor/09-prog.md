@@ -5,14 +5,10 @@ root: ../..
 
 ## Programming with Databases
 
-
-<div class="objectives" markdown="1">
 #### Objectives
-</div>
 *   Write short programs that execute SQL queries.
 *   Trace the execution of a program that contains an SQL query.
 *   Explain why most database applications are written in a general-purpose language rather than in SQL.
-</div>
 
 
 To close,
@@ -44,11 +40,10 @@ dbDisconnect(con)
 rm(con)
 </code></pre>
 
-<div class="out"><pre class='out'><code>(-49.85, -128.57)
+<pre class='out'><code>(-49.85, -128.57)
 (-47.15, -126.72)
 (-48.87, -123.4)
-</code></pre></div>
-
+</code></pre>
 
 The program starts by installing and loading the `RSQLite` library.
 If we were connecting to MySQL, DB2, or some other database,
@@ -83,11 +78,9 @@ Instead,
 it's normal to create one connection that stays open for the lifetime of the program.
 But when we are done, it is good practice to close the connenction.
 
-
 Queries in real applications will often depend on values provided by users.
 For example,
 this function takes a user's ID as a parameter and returns their name:
-
 
 <pre class="in"><code>get_name = function(db_file, person_ident){
   query = paste("select personal || ' ' || family from Person where ident='", person_ident, "';", sep="")
@@ -101,10 +94,7 @@ this function takes a user's ID as a parameter and returns their name:
 
 get_name("survey.db", "dyer")</code></pre>
 
-
-<div class="out"><pre class='out'><code>William Dyer
-</code></pre></div>
-
+## Concatenation
 
 We use string concatenation (`paste`) on the first line of this function
 to construct a query containing the user ID we have been given.
@@ -152,7 +142,7 @@ A prepared statement makes key changes in the query string that allows user inpu
    Disconnect from 	your copy of the database.
 
 2.  **Explore:** Look at the dataframe in R. How many species are there? How does mass change throughout the years? 
-   Plot the 	results for avg_wgt vs. year. 
+   Plot the	results for avg_wgt vs. year. 
    Write a script that subsets the data to only include species starting with "D". These are keystone kangaroo rat species. 
    Plot their average masses by year.
 
