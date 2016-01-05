@@ -80,7 +80,7 @@ Write a query that returns the number of each species captured in each year, sor
 
 ###When Aggregate seems to go wrong...
 
-####If you try to combine aggregated results with raw results:
+#### 1. If you try to combine aggregated results with raw results:
 
 <pre class="in"><code>SELECT species_id, count(*) FROM surveys WHERE (year=1998) AND (plot=1);</code></pre>
 
@@ -97,16 +97,16 @@ or something else entirely.
 We can also combine aggregated results with raw results,
 although the output might surprise you:
 
-####What if there are no values to aggregate?
+#### 2. What if there are no values to aggregate?
+
 In this case, the aggregations result is "don't know" rather than zero or some other arbitrary value:
 
 <pre class="in"><code>SELECT species_id, MAX(weight), sum(weight) FROM surveys WHERE quant='missing';</code></pre>
+ 
+Here, the table would just show 3 columns that say "None".
 
-<div class="out"><table>
-<tr><td>None</td><td>None</td><td>None</td></tr>
-</table></div>
+#### 3. What if I try to aggregate values and one of them is NULL?
 
-####What if I try to aggregate values and one of them is NULL?
 Aggregation function are inconsistent with the rest of SQL in a very useful way. 
 Normally, if we add two values and one of them is null, the result is null.
 By extension, if we use `sum` to add all the values in a set, and any of those values are null,
