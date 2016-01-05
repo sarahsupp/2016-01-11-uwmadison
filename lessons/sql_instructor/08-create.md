@@ -12,6 +12,7 @@ root: ../..
 *   Write queries that creates tables.
 *   Write queries to insert, modify, and delete records.
 
+**Cover only if there is time, if students are following along, if they've asked about it, and it seems to make sense**
 
 So far we have only looked at how to get information out of a database,
 both because that is more frequent than adding information,
@@ -22,7 +23,6 @@ we need to know two other sets of commands.
 
 ### Creating and Removing Tables
 
-
 The first pair are `create table` and `drop table`.
 While they are written as two words,
 they are actually single commands.
@@ -31,22 +31,24 @@ its arguments are the names and types of the table's columns.
 For example,
 the following statements create the four tables in our survey database:
 
+**modify below for actual colnames and data types**
 ~~~
-create table Person(ident text, personal text, family text);
-create table Site(name text, lat real, long real);
-create table Visited(ident integer, site text, dated text);
-create table Survey(taken integer, person text, quant real, reading real);
+CREATE TABLE plots(ident text, personal text, family text);
+CREATE TABLE species(name text, lat real, long real);
+CREATE TABLE surveys(ident integer, site text, dated text);
 ~~~
 
 We can get rid of one of our tables using:
 
 ~~~
-drop table Survey;
+DROP TABLE surveys;
 ~~~
 
 Be very careful when doing this:
 most databases have some support for undoing changes,
 but it's better not to have to rely on it.
+
+**One of the best things about learning these concepts is that you can read and laugh at XKCD comics now! Here's one about [little Bobby Tables](https://xkcd.com/327/).**
   
 Different database systems support different data types for table columns,
 but most provide the following:
@@ -72,10 +74,10 @@ is an unending portability headache.
 When we create a table,
 we can specify several kinds of constraints on its columns.
 For example,
-a better definition for the `Survey` table would be:
+a better definition for the `surveys` table would be:
 
 ~~~
-create table Survey(
+CREATE TABLE Survey(
     taken   integer not null, -- where reading taken
     person  text,             -- may not know who took it
     quant   real not null,    -- the quantity measured
@@ -91,8 +93,8 @@ exactly what constraints are avialable
 and what they're called
 depends on which database manager we are using.
 
-### Adding, Removing, and Updating Data
 
+### Adding, Removing, and Updating Data
 
 Once tables have been created,
 we can add, change, and remove records using our other set of commands,
@@ -101,21 +103,19 @@ we can add, change, and remove records using our other set of commands,
 The simplest form of `insert` statement lists values in order:
 
 ~~~
-insert into Site values('DR-1', -49.85, -128.57);
-insert into Site values('DR-3', -47.15, -126.72);
-insert into Site values('MSK-4', -48.87, -123.40);
+INSERT INTO species VALUES('PI', 'Heteromyidae', 'Chaetodipus', 'intermedius', 'rodent');
 ~~~
 
 We can also insert values into one table directly from another:
 
 ~~~
-create table JustLatLong(lat text, long text);
-insert into JustLatLong select lat, long from site;
+CREATE TABLE JustLatLong(lat text, long text);
+INSERT INTO JustLatLong SELECT lat, long FROM site;
 ~~~
 
 
 ~~~
-drop table JustLatLong(lat text, long text);
+DROP TABLE JustLatLong(lat text, long text);
 ~~~
 
 
@@ -128,11 +128,11 @@ For example, if we made a mistake when entering the lat and long values
 of the last `insert` statement above:
 
 ~~~
-update Site set lat=-47.87, long=-122.40 where name='MSK-4'
+UPDATE species SET genus='Perognathus' WHERE species_id='PB'
 ~~~
 
-Be care to not forget the `where` clause or the update statement will
-modify *all* of the records in the database.
+**Be care to not forget the `where` clause or the update statement will
+modify *all* of the records in the database.**
 
 Deleting records can be a bit trickier,
 because we have to ensure that the database remains internally consistent.
@@ -140,31 +140,31 @@ If all we care about is a single table,
 we can use the `delete` command with a `where` clause
 that matches the records we want to discard.
 For example,
-once we realize that Frank Danforth didn't take any measurements,
-we can remove him from the `Person` table like this:
+if we have a species in the species table that never occurs in our surveys table (e.g. it has never been observed or measured),
+we can remove it from the `species` table like this:
 
 ~~~
-delete from Person where ident = "danforth";
+DELETE FROM species WHERE species.id = "ZZ";
 ~~~
 
-But what if we removed Anderson Lake instead?
-Our `Survey` table would still contain seven records
-of measurements he'd taken,
+But what if we removed a species that *is* found in the surveys instead, like *Dipodomys ordii*?
+Our `surveys` table would still contain records
+of measurements of 'DO',
 but that's never supposed to happen:
-`Survey.person` is a foreign key into the `Person` table,
+`surveys.species_id` is a foreign key into the `species` table,
 and all our queries assume there will be a row in the latter
 matching every value in the former.
   
 This problem is called [referential integrity](../../gloss.html#referential-integrity):
 we need to ensure that all references between tables can always be resolved correctly.
 One way to do this is to delete all the records
-that use `'lake'` as a foreign key
+that use `'DO'` as a foreign key
 before deleting the record that uses it as a primary key.
 If our database manager supports it,
 we can automate this
 using [cascading delete](../../gloss.html#cascading-delete).
 However,
-this technique is outside the scope of this chapter.
+this technique is outside the scope of this chapter. **And it is unlikely that we would want to rid ourselves of this information, unless  it truly represented a mistake or error**
 
 > Many applications use a hybrid storage model
 > instead of putting everything into a database:
@@ -181,33 +181,24 @@ this technique is outside the scope of this chapter.
 
 #### Challenges
 
-1.  Write an SQL statement to replace all uses of `null`
-    in `Survey.person`
+1.  Write an SQL statement to replace all uses of `R`
+    in `surveys.sex`
     with the string `'unknown'`.
 
 2.  One of our colleagues has sent us a [CSV](../../gloss.html#comma-separeted-values) file
-    containing temperature readings by Robert Olmstead,
+    containing surveys on a new nearby plots, 25,
     which is formatted like this:
 
     ~~~
-    Taken,Temp
-    619,-21.5
-    622,-15.5
+    plot,type
+    25, control, DO, M, 34
+    25, control, DO, F, 40
+    25, control, PP, M, 14
+    25, control, PB, M, 26
     ~~~
     
-    **What would you need to update to add this information to your database? Which tables? Use `update` to add the person and the data to your table.  
+    **What would you need to update to add this information to your database? Which tables? Use `update` to add the data to your table.**
 
-
-
-3.  SQLite has several administrative commands that aren't part of the SQL standard.
-    One of them is `.dump`,
-    which prints the SQL commands needed to re-create the database.
-    Another is `.load`,
-    which reads a file created by `.dump` and restores the database.
-    A colleague of yours thinks that storing dump files (which are text) in version control
-    is a good way to track and manage changes to the database.
-    What are the pros and cons of this approach?
-    (Hint: records aren't stored in any particular order.)
 
 
 <div class="keypoints" markdown="1">
