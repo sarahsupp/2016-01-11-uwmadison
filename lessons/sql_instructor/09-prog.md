@@ -145,9 +145,16 @@ A prepared statement makes key changes in the query string that allows user inpu
 
 #### Challenges
 
-1.  Write an short R program that connects to the portal_mammals 	database, a real long-term ecological dataset. **Explore:** Use 	commands in R to determine the names of the tables, and the 	names of the fields in the tables. **Return:** Write a  	query that returns a dataframe with the total rodent mass for 	each year. Write a second query 	that returns a dataframe with 	the average weight (rounded 2 	decimal places) for each year, 	plot and species.  Disconnect from 	your copy of the database.
+1.  Write an short R program that connects to the portal_mammals 	database, a real long-term ecological dataset. 
+   **Explore:** Use 	commands in R to determine the names of the tables, and the 	names of the fields in the tables. 
+   **Return:** Write a  	query that returns a dataframe with the total rodent mass for each year. 
+   Write a second query 	that returns a dataframe with 	the average weight (rounded 2 decimal places) for each year, 	plot and species.  
+   Disconnect from 	your copy of the database.
 
-2.  **Explore:** Look at the dataframe in R. How many species are 	there? How does mass change throughout the years. Plot the 	results for avg_wgt vs. year. Write a script that subsets the 	data to only include species starting with "D". These are 	keystone kangaroo rat species. Plot their average masses by 	year.
+2.  **Explore:** Look at the dataframe in R. How many species are there? How does mass change throughout the years? 
+   Plot the 	results for avg_wgt vs. year. 
+   Write a script that subsets the data to only include species starting with "D". These are keystone kangaroo rat species. 
+   Plot their average masses by year.
 
 
 
