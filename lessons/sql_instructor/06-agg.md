@@ -15,322 +15,116 @@ root: ../..
 *   Trace the execution of a query that performs aggregation.
 *   Explain how missing data is handled during aggregation.
 
+Aggregation allows us to combine results by grouping records based on value and calculating combined values in groups. We know how to select all of the data from a column, but to combine them, we must use an aggregation function. Each of these functions takes a set of records as input, and produces a single record as output. 
+**If it helps, draw on board to explain what the computer is doing here**
 
-We now want to calculate ranges and averages for our data.
-We know how to select all of the dates from the `Visited` table:
+###COUNT and GROUP BY
+Let's go to the surveys table and find out how many individuals there are. Using the wildcard (*) simply counts the number of records (rows).
 
-<pre class="in"><code>select dated from Visited;</code></pre>
+<pre class="in"><code>SELECT COUNT(*) FROM surveys;</code></pre>
 
-<div class="out"><table>
-<tr><td>1927-02-08</td></tr>
-<tr><td>1927-02-10</td></tr>
-<tr><td>1939-01-07</td></tr>
-<tr><td>1930-01-12</td></tr>
-<tr><td>1930-02-26</td></tr>
-<tr><td>None</td></tr>
-<tr><td>1932-01-14</td></tr>
-<tr><td>1932-03-22</td></tr>
-</table></div>
+We can also find out how much those individuals weigh, all together:
 
+<pre class="in"><code>SELECT COUNT(*), SUM(weight) FROM surveys;</code></pre>
 
-but to combine them,
-we must use an [aggregation function](../../gloss.html#aggregation-function)
-such as `min` or `max`.
-Each of these functions takes a set of records as input,
-and produces a single record as output:
+We can output this value in kilograms, rounded to 3 decimal places:
 
+<pre class="in"><code>SELECT ROUND(SUM(weight)/1000.0, 3) FROM surveys;</code></pre>
 
-<pre class="in"><code>select min(dated) from Visited;</code></pre>
+There are many other aggregate functions included in SQL including `MAX`, `MIN`, and `AVG`.
 
-<div class="out"><table>
-<tr><td>1927-02-08</td></tr>
-</table></div>
+####Challenge
+   
+   Write a query that returns:
+*  total weight
+*  average weight
+*  min weight
+*  max weight
 
-**DRAW ON THE BOARD AND DISCUSS WHAT THE COMPUTER IS DOING HERE**
+for all animals captured over the duration of the study. Can you modify it so that it outputs that for a range of weights?
+   
+**Now**, let's see how many individuals were counted in each species. We can do this using a GROUP BY clause:
 
-<img src="img/sql-aggregation.svg" alt="SQL Aggregation" />
+<pre class="in"><code>SELECT species_id, COUNT(*) FROM surveys GROUP BY species_id;</code></pre>
 
+GROUP BY tells SQL what field or fields we want to use to aggregate the data. You can see that this quickly becomes more powerful as we have more species, or dates, or whatever that we are interested in. In theory, we could write a small query to get the data for a single species, but as we expand to 10, 50, or 100s of species, this quickly would become tedious.
 
-<pre class="in"><code>select max(dated) from Visited;</code></pre>
+#### Using `AS` to rename aggregated columns
+It's also getting difficult to read some of our aggregated column names after running our queries. We can fix this too using `AS`:
 
-<div class="out"><table>
-<tr><td>1939-01-07</td></tr>
-</table></div>
+<pre class="in"><code>SELECT species_id, count(*) AS num_indivs, ROUND(AVG(weight),2) AS avg_weight
+FROM surveys
+WHERE year=2007
+GROUP BY species_id;</code></pre>
 
+Just as we can sort by multiple criteria at once, we can also group by multiple criteria. To get the average weight by species and year measured, for example, we just add another field to the `GROUP BY` clause:  If we want to group by multiple fields, we give GROUP BY a comma separated list. Note that we might also want to add this new GROUP BY field to the SELECT clause, if it's not already there - otherwise the results won't make much sense.
 
-`min` and `max` are just two of
-the aggregation functions built into SQL.
-Three others are `avg`,
-`count`,
-and `sum`:
+#### Challenge
+Write queries that return:
+   1. How many individuals were counted in each year: a) in total, b) per each species
+   2. Average weight of each species in each year. 
+   3. Can you modify the above queries, combining them into one?
+  
+**Select student(s) to volunteer their results, and then walk through each of the steps the database manager is taking one by one. Remind students that these kind of queries can be difficult to write all at once, but that building up to them slowly, it is much easier**
+   
+### Ordering aggregated results
+We can order the results of our aggregation by a specific column, including the aggregated column. Let's count the number of individuals of each species captured, ordered by the count.
 
+<pre class="in"><code>SELECT species_id, COUNT(*) FROM surveys GROUP BY species_id ORDER BY COUNT(species_id);</code></pre>
 
-<pre class="in"><code>select avg(reading) from Survey where quant=&#39;sal&#39;;</code></pre>
+####Challenge
+Write a query that returns the number of each species captured in each year, sorted from the most frequently captured species to the least, within each year starting from the most recent records .
 
-<div class="out"><table>
-<tr><td>7.20333333333</td></tr>
-</table></div>
-
-
-<pre class="in"><code>select count(reading) from Survey where quant=&#39;sal&#39;;</code></pre>
-
-<div class="out"><table>
-<tr><td>9</td></tr>
-</table></div>
-
-
-<pre class="in"><code>select sum(reading) from Survey where quant=&#39;sal&#39;;</code></pre>
-
-<div class="out"><table>
-<tr><td>64.83</td></tr>
-</table></div>
-
-We can even round our results to the decimal place we would like:
-
-<pre class="in"><code>SELECT ROUND(SUM(reading), 3) FROM survey</code></pre>
+**Remind students that SQL is a hierarchical language. If you reorder your arguments (e.g. swap GROUP BY and WHERE), the query doesn't execute. REVISIT COMMANDS LEARNED SO FAR ON THE BOARD and add WHERE, GROUP BY to it.**
 
 
-We used `count(reading)` here,
-but we could just as easily have counted `quant`
-or any other field in the table,
-or even used `count(*)`,
-since the function doesn't care about the values themselves,
-just how many values there are.
+###When Aggregate seems to go wrong...
 
-SQL lets us do several aggregations at once.
-Since we know there is a problem with our readings, we can,
-for example,
-find the range of sensible salinity measurements:
+####If you try to combine aggregated results with raw results:
 
+<pre class="in"><code>SELECT species_id, count(*) FROM surveys WHERE (year=1998) AND (plot=1);</code></pre>
 
-<pre class="in"><code>select min(reading), max(reading) from Survey where quant=&#39;sal&#39; and reading&lt;=1.0;</code></pre>
+   **ASK CLASS: Why does SPECIES X appear rather than SPECIES Y OR SPECIES Z?**
 
-<div class="out"><table>
-<tr><td>0.05</td><td>0.21</td></tr>
-</table></div>
-
-
-We can also combine aggregated results with raw results,
-although the output might surprise you:
-
-
-<pre class="in"><code>select person, count(*) from Survey where quant=&#39;sal&#39; and reading&lt;=1.0;</code></pre>
-
-<div class="out"><table>
-<tr><td>lake</td><td>7</td></tr>
-</table></div>
-
-
-**ASK CLASS: Why does Lake's name appear rather than Roerich's or Dyer's?**
-
-The answer is that when it has to aggregate a field,
+The answer is that when the computer has to aggregate a field,
 but isn't told how to,
 the database manager chooses an actual value from the input set.
 It might use the first one processed,
 the last one,
-or something else entirely.
+or something else entirely. 
+*So this isn't probably what we wanted. It is a good idea to always do a quick sanity check on your results. Sometimes getting an answer isn't proof that the program did what you intended!*
 
-Another important fact is that when there are no values to aggregate,
-aggregation's result is "don't know"
-rather than zero or some other arbitrary value:
+We can also combine aggregated results with raw results,
+although the output might surprise you:
 
+####What if there are no values to aggregate?
+In this case, the aggregations result is "don't know" rather than zero or some other arbitrary value:
 
-<pre class="in"><code>select person, max(reading), sum(reading) from Survey where quant=&#39;missing&#39;;</code></pre>
+<pre class="in"><code>SELECT species_id, MAX(weight), sum(weight) FROM surveys WHERE quant='missing';</code></pre>
 
 <div class="out"><table>
 <tr><td>None</td><td>None</td><td>None</td></tr>
 </table></div>
 
-
-One final important feature of aggregation functions is that
-they are inconsistent with the rest of SQL in a very useful way.
-If we add two values,
-and one of them is null,
-the result is null.
-By extension,
-if we use `sum` to add all the values in a set,
-and any of those values are null,
+####What if I try to aggregate values and one of them is NULL?
+Aggregation function are inconsistent with the rest of SQL in a very useful way. 
+Normally, if we add two values and one of them is null, the result is null.
+By extension, if we use `sum` to add all the values in a set, and any of those values are null,
 the result should also be null.
-It's much more useful,
-though,
-for aggregation functions to ignore null values
-and only combine those that are non-null.
+
+It's much more useful though, for aggregation functions to ignore null values and only combine those that are non-null.
 This behavior lets us write our queries as:
 
+<pre class="in"><code>SELECT MIN(weight) FROM surveys;</code></pre>
 
-<pre class="in"><code>select min(dated) from Visited;</code></pre>
+instead of needing to explicitly filter for NULL values:
 
-<div class="out"><table>
-<tr><td>1927-02-08</td></tr>
-</table></div>
-
-
-instead of always having to filter explicitly:
-
-
-<pre class="in"><code>select min(dated) from Visited where dated is not null;</code></pre>
-
-<div class="out"><table>
-<tr><td>1927-02-08</td></tr>
-</table></div>
-
-
-Aggregating all records at once doesn't always make sense.
-For example,
-suppose Gina suspects that there is a systematic bias in her data,
-and that some scientists' radiation readings are higher than others.
-We know that this doesn't work:
-
-
-<pre class="in"><code>select person, count(reading), round(avg(reading), 2)
-from  Survey
-where quant=&#39;rad&#39;;</code></pre>
-
-<div class="out"><table>
-<tr><td>roe</td><td>8</td><td>6.56</td></tr>
-</table></div>
-
-
-because the database manager selects a single arbitrary scientist's name
-rather than aggregating separately for each scientist.
-Since there are only five scientists,
-she could write five queries of the form:
-
-
-<pre class="in"><code>select person, count(reading), round(avg(reading), 2)
-from  Survey
-where quant=&#39;rad&#39;
-and   person=&#39;dyer&#39;;</code></pre>
-
-<div class="out"><table>
-<tr><td>dyer</td><td>2</td><td>8.81</td></tr>
-</table></div>
-
-**But why wouldn't we want to write separate queries? Ideas?**
-
-but this would be tedious,
-and if she ever had a data set with fifty or five hundred scientists,
-the chances of her getting all of those queries right is small.
-
-What we need to do is
-tell the database manager to aggregate the hours for each scientist separately
-using a `group by` clause:
-
-
-<pre class="in"><code>select   person, count(reading), round(avg(reading), 2)
-from     Survey
-where    quant=&#39;rad&#39;
-group by person;</code></pre>
-
-<div class="out"><table>
-<tr><td>dyer</td><td>2</td><td>8.81</td></tr>
-<tr><td>lake</td><td>2</td><td>1.82</td></tr>
-<tr><td>pb</td><td>3</td><td>6.66</td></tr>
-<tr><td>roe</td><td>1</td><td>11.25</td></tr>
-</table></div>
-
-
-`group by` does exactly what its name implies:
-groups all the records with the same value for the specified field together
-so that aggregation can process each batch separately.
-Since all the records in each batch have the same value for `person`,
-it no longer matters that the database manager
-is picking an arbitrary one to display
-alongside the aggregated `reading` values.
-
-Its also getting difficult to read some of our aggregated column names after running our queries. We can fix this too using `AS`:
-
-<pre class="in"><code>SELECT person, count(reading) AS num_readings, ROUND(AVG(reading),2) AS avg_reading
-FROM survey
-WHERE quant='rad'
-GROUP BY person;</code></pre>
-
-**Notice that SQL is a hierarchical language. If you reorder your arguments (e.g. swap GROUP BY and WHERE), the query doesn't execute. REVISIT COMMANDS LEARNED SO FAR ON THE BOARD**
-
-
-Just as we can sort by multiple criteria at once,
-we can also group by multiple criteria.
-To get the average reading by scientist and quantity measured,
-for example,
-we just add another field to the `group by` clause:
-
-
-<pre class="in"><code>select   person, quant, count(reading), round(avg(reading), 2)
-from     Survey
-group by person, quant;</code></pre>
-
-<div class="out"><table>
-<tr><td>None</td><td>sal</td><td>1</td><td>0.06</td></tr>
-<tr><td>None</td><td>temp</td><td>1</td><td>-26.0</td></tr>
-<tr><td>dyer</td><td>rad</td><td>2</td><td>8.81</td></tr>
-<tr><td>dyer</td><td>sal</td><td>2</td><td>0.11</td></tr>
-<tr><td>lake</td><td>rad</td><td>2</td><td>1.82</td></tr>
-<tr><td>lake</td><td>sal</td><td>4</td><td>0.11</td></tr>
-<tr><td>lake</td><td>temp</td><td>1</td><td>-16.0</td></tr>
-<tr><td>pb</td><td>rad</td><td>3</td><td>6.66</td></tr>
-<tr><td>pb</td><td>temp</td><td>2</td><td>-20.0</td></tr>
-<tr><td>roe</td><td>rad</td><td>1</td><td>11.25</td></tr>
-<tr><td>roe</td><td>sal</td><td>2</td><td>32.05</td></tr>
-</table></div>
-
-
-Note that we have added `person` to the list of fields displayed,
-since the results wouldn't make much sense otherwise.
-
-Let's go one step further and remove all the entries
-where we don't know who took the measurement:
-
-**ASK SOMEONE TO SUGGEST an answer for this**
-
-
-<pre class="in"><code>select   person, quant, count(reading), round(avg(reading), 2)
-from     Survey
-where    person is not null
-group by person, quant
-order by person, quant;</code></pre>
-
-<div class="out"><table>
-<tr><td>dyer</td><td>rad</td><td>2</td><td>8.81</td></tr>
-<tr><td>dyer</td><td>sal</td><td>2</td><td>0.11</td></tr>
-<tr><td>lake</td><td>rad</td><td>2</td><td>1.82</td></tr>
-<tr><td>lake</td><td>sal</td><td>4</td><td>0.11</td></tr>
-<tr><td>lake</td><td>temp</td><td>1</td><td>-16.0</td></tr>
-<tr><td>pb</td><td>rad</td><td>3</td><td>6.66</td></tr>
-<tr><td>pb</td><td>temp</td><td>2</td><td>-20.0</td></tr>
-<tr><td>roe</td><td>rad</td><td>1</td><td>11.25</td></tr>
-<tr><td>roe</td><td>sal</td><td>2</td><td>32.05</td></tr>
-</table></div>
-
-
-**Let's think about what happened in this query**
-
-Looking more closely,
-this query:
-
-1.  selected records from the `Survey` table
-    where the `person` field was not null;
-
-2.  grouped those records into subsets
-    so that the `person` and `quant` values in each subset
-    were the same;
-
-3.  ordered those subsets first by `person`,
-    and then within each sub-group by `quant`;
-    and
-
-4.  counted the number of records in each subset,
-    calculated the average `reading` in each,
-    and chose a `person` and `quant` value from each
-    (it doesn't matter which ones,
-    since they're all equal).
-    
-  **While this may have been difficult to write all at once, building up slowly allowed us to make sure it worked and to think about potential problems.**
-
+<pre class="in"><code>SELECT MIN(weight) FROM surveys WHERE weight IS NOT NULL;</code></pre>
 
 #### Challenges (Work in pairs)
 
-1.  How many temperature readings did Frank Pabodie record,
-    and what was their average value?
+1.  How many individuals of Neotoma albigula (pack rat) were captured,
+    and what was their average weight?
 
 2.  The average of a set of values is the sum of the values
     divided by the number of values.
@@ -340,32 +134,15 @@ this query:
     **ANSWER: should return 3 becasue aggregate functions ignore NULL rows**
 
 3.  We want to calculate the difference between
-    each individual radiation reading
-    and the average of all the radiation readings.
+    each individual weight
+    and the average of all the weights for Neotoma.
     We write the query:
 
     ~~~
-    select reading - avg(reading) from Survey where quant='rad';
+    SELECT weight - avg(weight) FROM survey WHERE species_id='NA';
     ~~~
 
-    What does this actually produce, and why?
-    
-
-4.  **NOTE: NOT SURE THIS WORKS THE SAME IN Firefox SQLite Manager. High derailment probability. SKIP**
-
-	The function `group_concat(field, separator)`
-    concatenates all the values in a field
-    using the specified separator character
-    (or ',' if the separator isn't specified).
-    Use this to produce a one-line list of scientists' names,
-    such as:
-
-    ~~~
-    William Dyer, Frank Pabodie, Anderson Lake, Valentina Roerich, Frank Danforth
-    ~~~
-
-    Can you find a way to order the list by surname?
-    
+   **What does this actually produce, and why?**
     
 
 <div class="keypoints" markdown="1">
