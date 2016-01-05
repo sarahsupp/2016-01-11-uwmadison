@@ -3,7 +3,7 @@ layout: lesson
 root: ../..
 ---
 
-## Combining Data
+## Combining Data- Joins and Aliases
 
 
 <div class="objectives" markdown="1">
@@ -30,57 +30,25 @@ The key is to have an identifier in common between tables - shared columns.
 This will allow us to JOIN tables.
 This is what we will discuss now.**
 
-**For example, the person code is included in the Survey table,
-but we don’t know the full names  if we only look at this table.
-That information is stored in the Person table and can be
+**For example, the species code is included in the Survey table,
+but we don’t know the full scientific names if we only look at this table.
+That information is stored in the species table and can be
 linked to if we need it.
-This means that we don't have to record the full personal, family,
-and person code information every time a reading is recorded. As databases get larger, minimizing repeated information is extremely useful!**  
+This means that we don't have to record the full family, genus, and species,
+information every time a reading is recorded. The same is true for the details of each of the experimental plots
+that surveys take place on. As databases get larger, minimizing repeated information is extremely useful!**  
 
-In order to submit her data to a web site
-that aggregates historical meteorological data,
-Gina needs to format it as
-latitude, longitude, date, quantity, and reading.
-However,
-her latitudes and longitudes are in the `Site` table,
-while the dates of measurements are in the `Visited` table
-and the readings themselves are in the `Survey` table.
-She needs to combine these tables somehow.
+##Joins
+To combine data from two (or more) tables, we use the SQL `JOIN` command, which comes after the `FROM` command. 
+**Add to hierarchy of terms on the board**
 
-The SQL command to do this is `join`.
-To see how it works,
-let's start by joining the `Site` and `Visited` tables:
+We also need to tell the computer which columns provide the link between the two tables using the word `ON`. What we want is to join the data with the same species codes. To see how this works, lets start by linking the surveys and the species tables:
 
+<pre class="in"><code>SELECT * 
+FROM surveys JOIN species
+ON surveys.species.id = species.species_id;</code></pre>
 
-<pre class="in"><code>select * from Site join Visited;</code></pre>
-
-<div class="out"><table>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>619</td><td>DR-1</td><td>1927-02-08</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>622</td><td>DR-1</td><td>1927-02-10</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>734</td><td>DR-3</td><td>1939-01-07</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>735</td><td>DR-3</td><td>1930-01-12</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>751</td><td>DR-3</td><td>1930-02-26</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>752</td><td>DR-3</td><td>None</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>837</td><td>MSK-4</td><td>1932-01-14</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>844</td><td>DR-1</td><td>1932-03-22</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>619</td><td>DR-1</td><td>1927-02-08</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>622</td><td>DR-1</td><td>1927-02-10</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>734</td><td>DR-3</td><td>1939-01-07</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>735</td><td>DR-3</td><td>1930-01-12</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>751</td><td>DR-3</td><td>1930-02-26</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>752</td><td>DR-3</td><td>None</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>837</td><td>MSK-4</td><td>1932-01-14</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>844</td><td>DR-1</td><td>1932-03-22</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>619</td><td>DR-1</td><td>1927-02-08</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>622</td><td>DR-1</td><td>1927-02-10</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>734</td><td>DR-3</td><td>1939-01-07</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>735</td><td>DR-3</td><td>1930-01-12</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>751</td><td>DR-3</td><td>1930-02-26</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>752</td><td>DR-3</td><td>None</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>837</td><td>MSK-4</td><td>1932-01-14</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>844</td><td>DR-1</td><td>1932-03-22</td></tr>
-</table></div>
-
+ON is like `WHERE`, it filters things things out according to a test condition. We use the `table.colname` format to tell the manager what column in which table we are referring to.
 
 `join` creates
 the [cross product](../../gloss.html#cross-product)
@@ -88,75 +56,66 @@ of two tables,
 i.e.,
 it joins each record of one with each record of the other
 to give all possible combinations.
-Since there are three records in `Site`
-and eight in `Visited`,
-the join's output has 24 records.
-And since each table has three fields,
-the output has six fields.
-  
+
+**If we forgot to include `ON`:**
+Since there are 10k records in `surveys`
+and <50 in `species`,
+the join's output has XXXXXX records.
+And since each table has XXX and XXXX fields,
+the output has XXX fields.
 What the join *hasn't* done is
 figure out if the records being joined have anything to do with each other.
 It has no way of knowing whether they do or not until we tell it how.
 To do that,
 we add a clause specifying that
-we're only interested in combinations that have the same site name:
+we're only interested in combinations that have the same site name, which is what `ON` does for us!
 
-
-<pre class="in"><code>SELECT * FROM Site JOIN Visited ON Site.name=Visited.site;</code></pre>
-
-<div class="out"><table>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>619</td><td>DR-1</td><td>1927-02-08</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>622</td><td>DR-1</td><td>1927-02-10</td></tr>
-<tr><td>DR-1</td><td>-49.85</td><td>-128.57</td><td>844</td><td>DR-1</td><td>1932-03-22</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>734</td><td>DR-3</td><td>1939-01-07</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>735</td><td>DR-3</td><td>1930-01-12</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>751</td><td>DR-3</td><td>1930-02-26</td></tr>
-<tr><td>DR-3</td><td>-47.15</td><td>-126.72</td><td>752</td><td>DR-3</td><td>None</td></tr>
-<tr><td>MSK-4</td><td>-48.87</td><td>-123.4</td><td>837</td><td>MSK-4</td><td>1932-01-14</td></tr>
-</table></div>
-
-
-`on` does the same job as `where`:
+`ON` does the same job as `WHERE`:
 it only keeps records that pass some test.
-(The difference between the two is that `on` filters records
+(The difference between the two is that `ON` filters records
 as they're being created,
-while `where` waits until the join is done
+while `WHERE` waits until the join is done
 and then does the filtering.)
 Once we add this to our query,
 the database manager throws away records
 that combined information about two different sites,
 leaving us with just the ones we want.
-  
-Notice that we used `table.field` to specify field names
-in the output of the join.
-We do this because tables can have fields with the same name,
-and we need to be specific which ones we're talking about.
-For example,
-if we joined the `person` and `visited` tables,
-the result would inherit a field called `ident`
-from each of the original tables.
 
-We can now use the same dotted notation
-to select the three columns we actually want
-out of our join:
+We often won't want all of the fields from both tables, so anywhere we would have used a field name in a non-join query, we can use the `table.colname` format under SELECT.
+
+For example, what if we wanted information on when individuals of each species were captured, but instead of their species ID we wanted their actual species names.
+
+<pre class="in"><code>SELECT surveys.year, surveys.month, surveys.day, species.genus, species.species 
+FROM surveys JOIN species
+ON surveys.species.id = species.species_id;</code></pre>
+
+####Challenge
+   Write a query that returns the genus, species, and the weight of every individual captured at the site.
+
+##Aliases (a reminder)
+As queries get more complex, names can get long and unwieldy. To help make things clearer we can use aliases to assign new names to things in the query.
+
+We can alias both table names:
+
+<pre class="in"><code>SELECT surv.year, surv.month, surv.day, surv.genus, sp.species
+FROM surveys AS surv JOIN species AS sp
+ON surv.species.id = sp.species_id;</code></pre>
+
+And column names: 
+
+<pre class="in"><code>SELECT surv.year AS yr, surv.month AS mo, surv.day AS day, surv.genus AS gen, sp.species AS sp 
+FROM surveys AS surv JOIN species AS sp
+ON surv.species.id = sp.species_id;</code></pre>
+
+The `AS` isn't technically required, so you could do:
+
+<pre class="in"><code>SELECT surv.year yr
+FROM surveys surv;</code></pre>
+
+but using `AS` is much clearer, so it's good style to include it. Saving typing is nice, but not if it makes what you've done confusing to read. **Remember, you 6 months ago are your own worst collaborator!**
 
 
-<pre class="in"><code>SELECT Site.lat, Site.long, Visited.dated
-FROM   Site JOIN Visited
-ON     Site.name=Visited.site;</code></pre>
-
-<div class="out"><table>
-<tr><td>-49.85</td><td>-128.57</td><td>1927-02-08</td></tr>
-<tr><td>-49.85</td><td>-128.57</td><td>1927-02-10</td></tr>
-<tr><td>-49.85</td><td>-128.57</td><td>1932-03-22</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>None</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1930-01-12</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1930-02-26</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1939-01-07</td></tr>
-<tr><td>-48.87</td><td>-123.4</td><td>1932-01-14</td></tr>
-</table></div>
-
-
+## Joining More than 2 tables
 If joining two tables is good,
 joining many tables must be better.
 In fact,
@@ -165,35 +124,13 @@ simply by adding more `join` clauses to our query,
 and more `on` tests to filter out combinations of records
 that don't make sense:
 
+<pre class="in"><code>SELECT surv.year AS yr, surv.month AS mo, surv.day AS day, surv.genus AS gen, sp.species AS sp plots.plot_description
+FROM surveys AS surv JOIN species AS sp JOIN plots
+ON surv.species.id = sp.species_id
+AND surv.plot = plots.plot_id
+WHERE surv.year > 1999;</code></pre>
 
-<pre class="in"><code>SELECT Site.lat, Site.long, Visited.dated, Survey.quant, Survey.reading
-FROM   Site JOIN Visited JOIN Survey
-ON     Site.name=Visited.site
-AND    Visited.ident=Survey.taken
-AND    Visited.dated is not null;</code></pre>
-
-<div class="out"><table>
-<tr><td>-49.85</td><td>-128.57</td><td>1927-02-08</td><td>rad</td><td>9.82</td></tr>
-<tr><td>-49.85</td><td>-128.57</td><td>1927-02-08</td><td>sal</td><td>0.13</td></tr>
-<tr><td>-49.85</td><td>-128.57</td><td>1927-02-10</td><td>rad</td><td>7.8</td></tr>
-<tr><td>-49.85</td><td>-128.57</td><td>1927-02-10</td><td>sal</td><td>0.09</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1939-01-07</td><td>rad</td><td>8.41</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1939-01-07</td><td>sal</td><td>0.05</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1939-01-07</td><td>temp</td><td>-21.5</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1930-01-12</td><td>rad</td><td>7.22</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1930-01-12</td><td>sal</td><td>0.06</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1930-01-12</td><td>temp</td><td>-26.0</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1930-02-26</td><td>rad</td><td>4.35</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1930-02-26</td><td>sal</td><td>0.1</td></tr>
-<tr><td>-47.15</td><td>-126.72</td><td>1930-02-26</td><td>temp</td><td>-18.5</td></tr>
-<tr><td>-48.87</td><td>-123.4</td><td>1932-01-14</td><td>rad</td><td>1.46</td></tr>
-<tr><td>-48.87</td><td>-123.4</td><td>1932-01-14</td><td>sal</td><td>0.21</td></tr>
-<tr><td>-48.87</td><td>-123.4</td><td>1932-01-14</td><td>sal</td><td>22.5</td></tr>
-<tr><td>-49.85</td><td>-128.57</td><td>1932-03-22</td><td>rad</td><td>11.25</td></tr>
-</table></div>
-
-
-We can tell which records from `Site`, `Visited`, and `Survey`
+*We can tell which records from `surveys`, `species`, and `plots`
 correspond with each other
 because those tables contain
 [primary keys](../../gloss.html#primary-key)
@@ -205,14 +142,14 @@ A foreign key is a value (or combination of values) from one table
 that identifies a unique record in another table.
 Another way of saying this is that
 a foreign key is the primary key of one table
-that appears in some other table.
+that appears in some other table.*
 In our database,
-`Person.ident` is the primary key in the `Person` table,
-while `Survey.person` is a foreign key
-relating the `Survey` table's entries
-to entries in `Person`.
+`plots.plot_id` is the primary key in the `plots` table,
+while `surveys.plot` is a foreign key
+relating the `surveys` table's entries
+to entries in `plots`.
 
-Most database designers believe that
+*Most database designers believe that
 every table should have a well-defined primary key.
 They also believe that this key should be separate from the data itself,
 so that if we ever need to change the data,
@@ -223,74 +160,58 @@ as we add it to the database.
 This is actually very common:
 those IDs have names like "student numbers" and "patient numbers",
 and they almost always turn out to have originally been
-a unique record identifier in some database system or other.
+a unique record identifier in some database system or other.*
+
 As the query below demonstrates,
 SQLite automatically numbers records as they're added to tables,
 and we can use those record numbers in queries:
 
+<pre class="in"><code>SELECT rowid, * FROM plots;</code></pre>
 
-<pre class="in"><code>select rowid, * from Person;</code></pre>
-
-<div class="out"><table>
-<tr><td>1</td><td>dyer</td><td>William</td><td>Dyer</td></tr>
-<tr><td>2</td><td>pb</td><td>Frank</td><td>Pabodie</td></tr>
-<tr><td>3</td><td>lake</td><td>Anderson</td><td>Lake</td></tr>
-<tr><td>4</td><td>roe</td><td>Valentina</td><td>Roerich</td></tr>
-<tr><td>5</td><td>danforth</td><td>Frank</td><td>Danforth</td></tr>
-</table></div>
-
-### Data Hygiene
-
-
+## Data Hygiene
 Now that we have seen how joins work,
 we can see why the relational model is so useful
 and how best to use it.
-The first rule is that every value should be [atomic](../../gloss.html#atomic-value),
+
+The **first rule** is that every value should be [atomic](../../gloss.html#atomic-value),
 i.e.,
 not contain parts that we might want to work with separately.
 We store personal and family names in separate columns instead of putting the entire name in one column
 so that we don't have to use substring operations to get the name's components.
 More importantly,
 we store the two parts of the name separately because splitting on spaces is unreliable:
-just think of a name like "Eloise St. Cyr" or "Jan Mikkel Steubart".
+just think of a name like "Eloise St. Cyr" or "Jan Mikkel Steubart" or for those of you familiar with species names, 
+we might have *dipodomys merriami* or *dipodomys cf merriami*.
 
-The second rule is that every record should have a unique primary key.
+The **second rule** is that every record should have a unique primary key.
 This can be a serial number that has no intrinsic meaning,
-one of the values in the record (like the `ident` field in the `Person` table),
+one of the values in the record (like the `plot_id` field in the `plots` table),
 or even a combination of values:
-the triple `(taken, person, quant)` from the `Survey` table uniquely identifies every measurement.
+the triple `(year, month, day, plot, stake)` from the `surveys` table uniquely identifies every measurement.
 
-The third rule is that there should be no redundant information.
+The **third rule** is that there should be no redundant information.
 For example,
-we could get rid of the `Site` table and rewrite the `Visited` table like this:
-
-<table>
-  <tr> <td>619</td> <td>-49.85</td> <td>-128.57</td> <td>1927-02-08</td> </tr>
-  <tr> <td>622</td> <td>-49.85</td> <td>-128.57</td> <td>1927-02-10</td> </tr>
-  <tr> <td>734</td> <td>-47.15</td> <td>-126.72</td> <td>1939-01-07</td> </tr>
-  <tr> <td>735</td> <td>-47.15</td> <td>-126.72</td> <td>1930-01-12</td> </tr>
-  <tr> <td>751</td> <td>-47.15</td> <td>-126.72</td> <td>1930-02-26</td> </tr>
-  <tr> <td>752</td> <td>-47.15</td> <td>-126.72</td> <td>null</td> </tr>
-  <tr> <td>837</td> <td>-48.87</td> <td>-123.40</td> <td>1932-01-14</td> </tr>
-  <tr> <td>844</td> <td>-49.85</td> <td>-128.57</td> <td>1932-03-22</td> </tr>
-</table>
+we could get rid of the `plots` table and rewrite the `surveys` table as a single giant data table that would just record all the plot description and experiment type each time...
 
 In fact,
 we could use a single table that recorded all the information about each reading in each row,
 just as a spreadsheet would.
 The problem is that it's very hard to keep data organized this way consistent:
 if we realize that the date of a particular visit to a particular site is wrong,
+or that a species name has been updated,
 we have to change multiple records in the database.
 What's worse,
 we may have to guess which records to change,
 since other sites may also have been visited on that date.
 
-The fourth rule is that the units for every value should be stored explicitly.
+The **fourth rule** is that the units for every value should be stored explicitly.
 Our database doesn't do this,
-and that's a problem:
-Roerich's salinity measurements are several orders of magnitude larger than anyone else's,
-but we don't know if that means she was using parts per million instead of parts per thousand,
-or whether there actually was a saline anomaly at that site in 1932.
+and that's a potential problem:
+The weights of Neotoma albigula are several orders of magnitude larger than for Perognathus flavus,
+but if we aren't familiar with the data, we don't know if that means that the units of measurement are different, or 
+if these species represent truly different size classes.
+
+**Brief discussion on storing metadata, or at least simple README files that explain your data**
 
 Stepping back,
 data and the tools used to store it have a symbiotic relationship:
@@ -311,18 +232,18 @@ We won't cover it here today, but there are ways to join the data in more comple
 
 #### Challenges
 
-1.  Write a query that lists all radiation readings from the DR-1 site.
+1.  Write a query that lists all measurements taken from the kangaroo rat exclosures.
 
-2.  Write a query that lists all sites visited by people named "Frank".
+2.  Write a query that lists all the plots on which a rare species, Baiomys taylori, was captured.
 
 3.  Describe in your own words what the following query produces:
 
     ~~~
-    select Site.name from Site join Visited
-    on Site.lat<-49.0 and Site.name=Visited.site and Visited.dated>='1932-00-00';
+    SELECT plots.plot_id FROM plots JOIN surveys
+    ON surveys.year=1999  AND surveys.month = 6 and surveys.day=30 AND plots.plot_id=surveys.plot;
     ~~~
 
-**ANSWER: ON acts like WHERE. Could also be written using WHERE and ON.**
+**ANSWER: ON acts like WHERE. Could also be written using WHERE and ON. Would you write this a different way to make it more clear?**
 
 <div class="keypoints" markdown="1">
 #### Key Points
