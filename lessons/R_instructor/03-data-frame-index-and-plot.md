@@ -3,6 +3,275 @@ layout: lesson
 root: ../..
 ---
 
+# Learning Objectives
+* understand the concept of a data.frame
+* use sequences 
+* know how to access any element of a data.frame
+
+So we've already imported our Portal surveys dataframe, but I'm going to leave it alone for a bit longer. It's a really big dataset, and sometimes it's easier to explain, think about, and explore new ideas using some smaller examples. But we will get back to our surveys table soon!
+
+## What are data frames?
+
+`data.frame` is the *de facto* data structure for most tabular data and what we use for statistics and plotting.
+
+A `data.frame` is a collection of vectors of identical lengths. Each vector represents a column, and each vector can be of a different data type (e.g., characters, integers, factors). The `str()` function is useful to inspect the data types of the columns.
+
+A `data.frame` can be created by the functions `read.csv()` or `read.table()`, in other words, when importing spreadsheets from your hard drive (or the web).
+
+By default, `data.frame` converts (= coerces) columns that contain characters (i.e., text) into the `factor` data type. Depending on what you want to do with the data, you may want to keep these columns as `character`. To do so, `read.csv()` and `read.table()` have an argument called `stringsAsFactors` which can be set to `FALSE`:
+
+```r
+some_data <- read.csv("data/some_file.csv", stringsAsFactors=FALSE)
+```
+
+You can also create data.frame manually with the function data.frame(). This function can also take the argument stringsAsFactors. Compare the output of these examples, and compare the difference between when the data are being read as character and when they are being read as factor.
+```r
+example_data <- data.frame(animal=c("dog", "cat", "sea cucumber", "sea urchin"),
+                           feel=c("furry", "furry", "squishy", "spiny"),
+                           weight=c(45, 8, 1.1, 0.8))
+str(example_data)
+```
+The above code writes the data frame as factors, be default
+
+```r
+example_data <- data.frame(animal=c("dog", "cat", "sea cucumber", "sea urchin"),
+                           feel=c("furry", "furry", "squishy", "spiny"),
+                           weight=c(45, 8, 1.1, 0.8), stringsAsFactors=FALSE)
+str(example_data)
+```
+Here, we've allowed them to be characters.
+
+
+####Challenge
+
+1. There are a few mistakes in this hand crafted data.frame, can you spot and fix them? Don’t hesitate to experiment!
+```r
+    author_book <- data.frame(author_first=c("Charles", "Ernst", "Theodosius"),
+                              author_last=c(Darwin, Mayr, Dobzhansky),
+                              year=c(1942, 1970))
+```
+
+2. Can you predict the class for each of the columns in the following example?
+```r
+    country_climate <- data.frame(country=c("Canada", "Panama", "South Africa", "Australia"),
+                                   climate=c("cold", "hot", "temperate", "hot/temperate"),
+                                   temperature=c(10, 30, 18, "15"),
+                                   northern_hemisphere=c(TRUE, TRUE, FALSE, "FALSE"),
+                                   has_kangaroo=c(FALSE, FALSE, FALSE, 1))
+```
+Check your guesses using str(country_climate). Are they what you expected? Why? Why not? Discuss with your neighbor.
+
+R coerces (when possible) to the data type that is the least common denominator and is the easiest to coerce to.
+
+**In a small dataset like one of these, we might be able to easily track down these errors and fix them manually - e.g., we could remove the quotes from the 15 or the FALSE, or make sure we are consistent in using TRUE/FALSE vs. 0/1. But in a large dataset (how many rows did we say the survey's table has? - it would be really difficult to do this manually, and if the data has already been collected - too late to ask our recorders to be sure they are doing their job correctly! This is also why yesterday's data cleaning is so important. We can also clean our data right in R, but it is best/easiest if this step is done first!**
+
+## Inspecting data.frame objects
+
+We already saw how the functions `head()` and `str()` can be useful to check the content and the structure of a `data.frame`. Here is a non-exhaustive list of functions to get a sense of the content/structure of the data.
+
+* Size:
+  * `dim()` - returns a vector with the number of rows in the first element, and the number of columns as the second element (the __dim__ensions of the object)
+  * `nrow()` - returns the number of rows
+  * `ncol()` - returns the number of columns
+* Content:
+  * `head()` - shows the first 6 rows
+  * `tail()` - shows the last 6 rows
+* Names:
+  * `names()` - returns the column names (synonym of colnames() for data.frame objects)
+  * `rownames()` - returns the row names
+* Summary:
+  * `str()` - structure of the object and information about the class, length and content of each column
+  * `summary()` - summary statistics for each column
+
+**Note:** most of these functions are “generic”, they can be used on other types of objects besides `data.frame`.
+
+#### Challenge: 
+Try out a few of these on the surveys data that we imported. How large is the dataset? Does summary give you different information for the different data types?
+
+## Indexing and sequences
+
+If we want to extract one or several values from a vector, we must provide one or several indices in square brackets, just as we do in math. For instance:
+
+For the second value in the vector:
+```r
+animals <- c("mouse", "rat", "dog", "cat")
+animals[2]
+```
+
+For the third and then the second value in the vector (it will give it to us in the order we ask, not the order they originally appear:
+```r
+animals[c(3, 2)]
+```
+
+For the values 2 through 4 
+
+**Note** R indexes start at 1. Programming languages like Fortran, MATLAB, and R start counting at 1, because that’s what human beings typically do. Languages in the C family (including C++, Java, Perl, and Python) count from 0 because that’s simpler for computers to do.
+
+```r
+animals[2:4]
+```
+
+Can anyone explain in words what the computer is doing here?
+```r
+more_animals <- animals[c(1:3, 2:4)]
+more_animals
+```
+
+## Indexing data.frames
+**A `data.frame` is basically a collection of vectors, where each column is a single data type (e.g. numeric, character, factor...) and if it were on it's own, should function like a vector.**
+
+So using what we just learned about how to access different parts of a vector, let's think about how we might access different parts of a `data.frame`. 
+
+A vector is one dimensional (just a single "row" of numbers or strings. But a `data.frame` is 2-dimensional: it has rows and columns. So when we indexed our vector, we only needed to provide a single number in our brackets [2]. But for a data.frame, we need to identify where in the "grid" we want our data, so we use an index with row and column values [row, column]. 
+
+Our survey data frame has rows and columns (it has 2 dimensions), if we want to extract some specific data from it, we need to specify the “coordinates” we want from it. Row numbers come first, followed by column numbers.
+
+To select the first row and first column:
+```r
+surveys[1,1]
+```
+
+To select the first row and sixth column:
+```r
+surveys[1,6]
+```
+
+If we leave one of these blank, R will choose the ENTIRE row or column. Thus, to get the first row of data, we would use:
+```r
+surveys[1, ]
+```
+
+####Challenge:
+Using what we learned earlier and applying it to the surveys data, can you:
+* Extract the hindfoot_lengths
+* Extract the first 25 rows of data
+* Extract the first 25 rows of data, with only the columns for plot_id, species_id, sex, and hindfoot_length
+* Extract the last 25 rows of data, with only the columns for year, species_id, and weight.
+* Extract the data for species_id and weight and save it as a new data.frame called `species_weight`
+
+### : and Seq
+**Useful Side Note:** `:` is a special function that creates numeric vectors of integers in increasing or decreasing order, test `1:10` and `10:1` for instance. 
+
+The function `seq()` (for __seq__uence) can be used to create more complex patterns:
+
+To count by 2:
+`seq(1, 10, by=2)`
+
+To display 3 values starting with 5 and ending with 10:
+`seq(5, 10, length.out=3)`
+
+To isplay 10 values, starting at 50 and incrementing by 5:
+`seq(50, by=5, length.out=10)`
+
+To count by 3, but stop below the upper limit: 
+`seq(1, 8, by=3) # sequence stops to stay below upper limit`
+
+
+####Challenge
+
+The function `nrow()` on a `data.frame` returns the number of rows. Use it, in conjuction with `seq()` to create a new `data.frame` called `surveys_by_10` that includes every 10th row of the survey data frame starting at row 10 (10, 20, 30, …)
+
+It might be helpful to break this problem down into steps. Before you try for the final solution, think about what steps you will need to take to solve the problem. How many rows will you expect your final dataframe to be? You can use this to check if you were successful (remember, the computer giving you an answer doesn't mean its the right answer). You can try each step one at a time, building on each successful part. Try to begin on your own, but after a few minutes, you should discuss your problem-solving approach, and your solution (or however far you got) with your neighbor.
+
+Another important way to select data from specific columns, is to use the `$` notation. For example, we can select only the data from the years column by naming it:
+
+```r
+surveys$year
+```
+
+If we want, we can save that as a vector, by assigning it to a new name, so we can work with it separately.
+
+```r
+years <- surveys$year
+```
+
+One other useful thing, especially for factor or character variables, is to know what the unique things are.
+
+```r
+unique(surveys$year)
+```
+And again, we can save that out to a varable:
+```r
+years <- unique(surveys$year)
+```
+
+## Basic plotting
+
+Here's the part we've all been waiting for, let's make some pretty pictures with our data!
+
+Remember when we did the barplot example? We can do the same thing here, with the surveys data, now that we know how to index and subset it, and save it.
+
+```r
+barplot(table(surveys$taxa))
+```
+
+Awesome! Now we can see our data!
+If we look at the `help` for barplot, we can find all sorts of ways to make this graph "prettier" if we want.
+
+We can change the color of the bars, the limts on the x or y axis, the name of the figure, etc. 
+(R colors)[http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf] can be found online in several places.
+
+*Demonstrate a few of these, and give people a chance to explore and figure it out, maybe using weight this time, so they are doing something different*
+
+Let's take the data for hind foot length, and see what the distribution of values are. Hind foot length is allometrically related to body weight, so it can potentially act as a proxy for that measurement.
+
+```r
+hfl <- surveys$hindfoot_length
+barplot(table(hfl))
+```
+
+We can also plot the kernel density plots as a different way to see the distribution of our data:
+
+```r
+# Kernel Density Plot
+d <- density(surveys$hindfoot_length) # returns the density data
+plot(d) # plots the results 
+```
+
+Boxplots allow us to break the data up over some value, and to see the variance within each of those:
+
+```r
+boxplot(hindfoot_length ~ species_id, data=surveys, col="hotpink")
+```
+
+I'm not generally a fan of pie charts ((humans are bad at comparing pie slices)[http://www.businessinsider.com/pie-charts-are-the-worst-2013-6]), but you can make them easily in R:
+
+```r
+pie(table(surveys$species_id))
+```
+
+Remember that I said hind foot length and weight should be related. Let's see if that is true in this dataset!
+
+```r
+plot(surveys$hindfoot_length, surveys$weight)
+```
+
+We can even add data transformation or math right in our plot function:
+
+```r
+plot(surveys$hindfoot_length, log(surveys$weight))
+```
+
+Or add a trendline:
+
+```r
+plot(surveys$hindfoot_length, log(surveys$weight))
+abline(lm(log(surveys~weight) ~ surveys$hindfoot_length), col="red")
+```
+
+**Note:** in the above abline call, we still had to specify that we were logging weight - otherwise the computer wouldn't just know that from the previous line - *secret: computers aren't really that smart*. 
+
+**These are only a few simple ways to get started with plots in Base-R. There are many many more packages that you can download that allow you to make more detailed or "prettier" plots in R. Also, as we learn more about how to aggregate and analyze data, you can plot more useful data summaries, such as change in average mass through time, or the abundances of species through time!
+
+
+
+
+
+
+
+
+-------------- ** To cover later if there is time?** ------------------
+
 
 
 ## Creating Functions
