@@ -58,11 +58,11 @@ it joins each record of one with each record of the other
 to give all possible combinations.
 
 **If we forgot to include `ON`:**
-Since there are 10k records in `surveys`
-and <50 in `species`,
-the join's output has XXXXXX records.
-And since each table has XXX and XXXX fields,
-the output has XXX fields.
+Since there are 35549 records in `surveys`
+and 54 in `species`,
+the join's output has 1,919,646 records.
+And since each table has 10 and 4 fields,
+the output has 40 fields.
 What the join *hasn't* done is
 figure out if the records being joined have anything to do with each other.
 It has no way of knowing whether they do or not until we tell it how.

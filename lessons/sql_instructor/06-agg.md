@@ -61,6 +61,7 @@ Just as we can sort by multiple criteria at once, we can also group by multiple 
 
 #### Challenge
 Write queries that return:
+
    1. How many individuals were counted in each year: a) in total, b) per each species
    2. Average weight of each species in each year. 
    3. Can you modify the above queries, combining them into one?

@@ -12,9 +12,10 @@ The data we will be using is a time-series for a small mammal community in south
 This is a real dataset that has been used in over 100 publications. We've simplified it just a little bit for the workshop, but you can download the [full dataset](http://esapubs.org/archive/ecol/E090/118/) and work with it using exactly the same tools we'll learn about today.
 
 Today, we have access to several of the [main files](https://figshare.com/articles/Portal_Project_Teaching_Database/1314459) for the Portal Project that store information on: 
-   1. Study plots (these are the sites that data are measured at)
-   2. Species (information on each species that could be seen at the site)
-   3. Surveys (measurements taken for each individual captured during each survey for ~40 years)
+
+1.  Study plots (these are the sites that data are measured at)
+2.  Species (information on each species that could be seen at the site)
+3.  Surveys (measurements taken for each individual captured during each survey for ~40 years)
 
 If we were starting this dataset from the beginning, we would basically have three options:
 text files,
@@ -83,35 +84,28 @@ but that handful accounts for most of what scientists do.
 <strong>plots</strong>: information about each of the study plots/sites.
 
 <table>
-  <tr> <th>ident</th> <th>personal</th> <th>family</th> </tr>
-  <tr> <td>dyer</td> <td>William</td> <td>Dyer</td> </tr>
-  <tr> <td>pb</td> <td>Frank</td> <td>Pabodie</td> </tr>
-  <tr> <td>lake</td> <td>Anderson</td> <td>Lake</td> </tr>
-  <tr> <td>roe</td> <td>Valentina</td> <td>Roerich</td> </tr>
-  <tr> <td>danforth</td> <td>Frank</td> <td>Danforth</td> </tr>
+  <tr> <th>plot_id</th> <th>plot_type</th></tr>
+  <tr> <td>1</td> <td>control</td></tr>
+  <tr> <td>2</td> <td>control</td></tr>
+  <tr> <td>3</td> <td>removal</td></tr>
+  <tr> <td>4</td> <td>removal</td></tr>
+  <tr> <td>5</td> <td>exclosure</td></tr>
 </table>
 
 <strong>species</strong>: information about each of the species that have been seen at the site.
 
 <table>
-  <tr> <th>name</th> <th>lat</th> <th>long</th> </tr>
-  <tr> <td>DR-1</td> <td>-49.85</td> <td>-128.57</td> </tr>
-  <tr> <td>DR-3</td> <td>-47.15</td> <td>-126.72</td> </tr>
-  <tr> <td>MSK-4</td> <td>-48.87</td> <td>-123.4</td> </tr>
+  <tr> <th>species_id</th> <th>species</th> <th>genus</th> <th>taxa</th> </tr>
+  <tr> <td>DO</td> <td>merriami</td> <td>Diopodomys</td> <td>rodent</td> </tr>
+  <tr> <td>AX</td> <td> </td> <td> </td> <td>bird</td> </tr>
 </table>
 
 <strong>surveys</strong>: measurements taken for each individual animal captured at the site.
 
 <table>
-  <tr> <th>ident</th> <th>site</th> <th>dated</th> </tr>
-  <tr> <td>619</td> <td>DR-1</td> <td>1927-02-08</td> </tr>
-  <tr> <td>622</td> <td>DR-1</td> <td>1927-02-10</td> </tr>
-  <tr> <td>734</td> <td>DR-3</td> <td>1939-01-07</td> </tr>
-  <tr> <td>735</td> <td>DR-3</td> <td>1930-01-12</td> </tr>
-  <tr> <td>751</td> <td>DR-3</td> <td>1930-02-26</td> </tr>
-  <tr> <td>752</td> <td>DR-3</td> <td bgcolor="red">&nbsp;</td> </tr>
-  <tr> <td>837</td> <td>MSK-4</td> <td>1932-01-14</td> </tr>
-  <tr> <td>844</td> <td>DR-1</td> <td>1932-03-22</td> </tr>
+  <tr> <th>record_id</th> <th>month</th> <th>day</th> <th>year</th> <th>plot_id</th> <th>species_id</th> <th>sex</th> <th>hindfoot_length</th> <th>weight</th> </tr>
+  <tr> <td>INT</td> <td>INT</td> <td>INT</td> <td>INT</td> <td>INT</td> <td>TEXT</td> <td>TEXT</td> <td>INT</td>  <td>INT</td></tr>
+
 </table>
 </td>
 </table>
@@ -138,10 +132,13 @@ giving it the names of the columns we want and the table we want them from.
 Data can be added that is already in a sqlite databae, or by entering CSV or TXT files manually.
 
 __If__ a .sqlite file already exists: 
-   1. Open your database: **Database -> Connect Database** Skip the other steps. (The icon for this is the folder with an arrow pointing out of it) - From the [data link] (https://figshare.com/articles/Portal_Project_Teaching_Database/1314459) you'll notice a sqlite file. This is a database file that could be opened directly, but let's start with separate csv files so we can see how to build up the database ourselves.
+
+1. Open your database: **Database -> Connect Database** Skip the other steps. (The icon for this is the folder with an arrow pointing out of it) - From the [data link] (https://figshare.com/articles/Portal_Project_Teaching_Database/1314459) you'll notice a sqlite file. This is a database file that could be opened directly, but let's start with separate csv files so we can see how to build up the database ourselves.
    
 __If__ you are putting together a database from .csv files: 
+
 **Instructor, demonstrate using the surveys table, ask students to watch and follow along**
+   
    1. Download the three CSV files from the Portal Database (plots.csv, species.csv, surveys.csv)
    2. Start a New Database **Database -> New Database**  You'll be asked to enter the name of the database you want to create and where you want to save it.
    3. Start to import the tables **Database -> Import** 
@@ -154,8 +151,10 @@ __If__ you are putting together a database from .csv files:
    10. Set the data types for each field ** This is important because the type matters what you can do with the data **. Choose TEXT for fields with text (`species_id`, `genus`, `sex`, etc.) and INT for fields with numbers (`day`, `month`, `year`, `weight`, etc.).
 
    ####EXERCISE: 
-   **Import the other tables (plots and species). If you get stuck, ask a neighbor for advice or request help from one of the    helpers!**
-   *Once the data has been imported, go ahead and explore the different options for displaying the data in the SQL Manager**
+**Import the other tables (plots and species). If you get stuck, ask a neighbor for advice or request help from one of the    helpers!**
+
+**Once the data has been imported, go ahead and explore the different options for displaying the data in the SQL Manager**
+      
       * Structure
       * Browse and Search
 
@@ -194,9 +193,12 @@ You can also use this same approach to append new data to an existing table.
   <tr> <td>SQL</td> <td>Data Type Quick Reference</td> </tr>
 </table>
 
+
 Different databases offer different choices for the data type definition.
 
+
 The following table shows some of the common names of data types between the various database platforms:
+
 <table>
   <tr> <th>Data type</th> <th>Access</th> <th>SQLServer</th> <th>Oracle</th> <th>MySQL</th> <th>PostgreSQL</th> </tr>
   <tr> <td>boolean</td> <td>Yes/No</td> <td>Bit</td> <td>Byte</td> <td>N/A</td> <td>Boolean</td> </tr>

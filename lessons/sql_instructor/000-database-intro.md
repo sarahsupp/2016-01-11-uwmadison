@@ -1,3 +1,6 @@
+---
+output: html_document
+---
 Databases using SQL
 ===================
 
@@ -57,11 +60,14 @@ There are many different database management systems for working with relational
 
 ### Database Design
 **Sketch basics of database design on whiteboard to illustrate**
-  1. Every row-column combination contains a single *atomic* value, i.e., not containing parts we might want to work with separately
+  
+   1. Every row-column combination contains a single *atomic* value, i.e., not containing parts we might want to work with separately
+  
   2. One field per type of information (a *field* is a column of data)
+  
   3. No redundant information
-   * split into separate tables with one table per class of information
-    * Needs an identifier that is in common between tables - shared column - to reconnect (foreign key)
+* split into separate tables with one table per class of information
+* Needs an identifier that is in common between tables - shared column - to reconnect (foreign key)
 
 *Any questions so far?*
 

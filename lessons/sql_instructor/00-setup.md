@@ -34,9 +34,10 @@ Now, you are done with the setup and you can proceed to the next lesson.
 By default SQLite Manager opens in a separate window and it is not possible to zoom in to enlarge the font so that it is more readable.
 
 The way to do fix this is to:
-1. Open the SQLite Manager
-2. Click on the Settings button,
-3. Chose Start SQLite Manager in a new tab.
+
+1.  Open the SQLite Manager
+2.  Click on the Settings button,
+3.  Chose Start SQLite Manager in a new tab.
 You can then use Ctrl - + to zoom just like any other web page.
 
 
