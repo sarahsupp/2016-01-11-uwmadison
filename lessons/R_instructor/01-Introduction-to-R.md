@@ -4,6 +4,7 @@ root: ../..
 ---
 
 ##Learning Objectives
+
 * Familiarize participants with R syntax
 * Understand the concepts of objects and assignment
 * Understand the concepts of vector and data types
@@ -12,6 +13,7 @@ root: ../..
 
 ## The R syntax
 *Start by showing an example of a script - choose something simple and well-organized that I've written in the past, or an example file from DC*
+
 * Point to the different parts:
 * A function
 * The assignment operator `<-`
@@ -74,9 +76,12 @@ and then change weight_kg to 100.
 weight_kg <- 100
 ```
 **What do you think is the current content of the object weight_lb? 126.5 or 200?**
+
 *If we imagine the variable as a sticky note with a name written on it, 
 assignment is like putting the sticky note on a particular value:*
+
 **Can write a few values on the board and actually put the sticky note on the board, moving it around to show that the value can change**
+
 *This means that assigning a value to one object does not change the values of other variables. 
 Those other variables only change if we re-run or update the code to assign that variable again.
 So order matters!*

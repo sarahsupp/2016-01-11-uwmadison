@@ -205,8 +205,6 @@ write.csv(carSpeeds, file='car-speeds-cleaned.csv')</code></pre>
 
 If you open the file, you'll see that it has header names, because the data had headers within R, but that there are numbers in the first column.
 
-<img src="figure/CSV_WithRowNums.png" alt="csv written without row.names argument" />
-
 
 #### The row.names argument
 This argument allows us to set the names of the rows in the output data file. R's default for this argument is `TRUE`, and since it does not know what else to name the rows for the cars data set, it resorts to using row numbers. To correct this, we can set `row.names` to `FALSE`:
@@ -216,7 +214,6 @@ This argument allows us to set the names of the rows in the output data file. R'
 
 Now we see: 
 
-<img src="figure/CSV_WithoutRowNums.png" alt="csv written with row.names argument" />
 
 > **Tip:** there is also a `col.names` argument, which can be used to set the column names for a data set without headers. If the data set already has headers (e.g., we used the headers = TRUE argument when importing the data) then a `col.names` argument will be ignored.
 
@@ -241,7 +238,6 @@ write.csv(carSpeeds, file='car-speeds-cleaned.csv', row.names=FALSE, na= '-9999'
 
 And we see:
 
-<img src="figure/CSV_WithSpecialNA.png" alt="csv written with -9999 as NA" />
 
 
 #### Key Points

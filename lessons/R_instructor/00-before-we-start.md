@@ -36,6 +36,7 @@ R is a versatile, open source programming language that was specifically designe
 * RStudio is a great GUI for getting started with R, and what a lot of scientific programmers use!
 
 Let's open RStudio:
+
 * Start RStudio (demonstrate for class)
 * Under the `File` menu, click on `New project`, choose `New directory`, then `Empty project`
 * Enter a name for this new folder, and choose a convenient location for it. This will be your **working directory** for the rest of the day (e.g., `~/data-carpentry`)
@@ -46,8 +47,11 @@ Let's open RStudio:
 Your working directory should now look like this (show where it is on the screen, in the environments tab (under `files`).
 
 ## Presentation of RStudio
+
 **Point out the different windows in RStudio.**
+
 Let's start by learning about our tool.
+
 * Console, Scripts, Environments, Plots
 * Code and workflow are more reproducible if we can document everything that we do.
  * Avoid using too many shortcuts if you won't remember how you did something - best to document it in your `script`
@@ -67,7 +71,9 @@ If R is still waiting for you to enter more data because it isn’t complete yet
 
 
 ### Commenting
+
 Use `#` signs to comment. Comment liberally in your R scripts. Anything to the right of a `#` is ignored by R.
+
 **Commenting is important because these are your notes to yourself, or to a potential collaborator or code reviewer. Trust me, remembering what you did (and why) a few days from now, let alone a few months or years from now, is harder than you think!**
 
 ### Assignment operator
