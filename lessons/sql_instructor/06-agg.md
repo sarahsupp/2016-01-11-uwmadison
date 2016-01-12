@@ -102,7 +102,7 @@ although the output might surprise you:
 
 In this case, the aggregations result is "don't know" rather than zero or some other arbitrary value:
 
-<pre class="in"><code>SELECT species_id, MAX(weight), sum(weight) FROM surveys WHERE quant='missing';</code></pre>
+<pre class="in"><code>SELECT species_id, MAX(weight), sum(weight) FROM surveys WHERE weight > 500;</code></pre>
  
 Here, the table would just show 3 columns that say "None".
 
